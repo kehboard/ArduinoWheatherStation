@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Настройки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        button {
+            margin-top: 10px;
+        }
+
+        /*form {
+            border-radius: 5px;
+            border: 1px solid black;
+            padding-left: 10px;
+        }*/
+        h2 {
+            margin-top: 0px;
+        }
+    </style>
+</head>
+<body>
+<h1>Настройки</h1>
+
+<form onsubmit="return false;">
+    <h2>Подключение к интернету</h2>
+    <label><input type="checkbox" id="useConnectionToWifi" onclick="switchWifiConnection()">Использовать подключение к
+        интернету<br></label>
+    <label>SSID точки доступа:<br><input type="text" id="clientSSID" disabled><br></label>
+    <label>Пароль точки доступа (если нет оставьте пустым):<br><input type="text" id="passwordSSID"
+                                                                      disabled><br></label>
+    <label>
+        <button id="applyWifiConnection" onclick="setWiFiConnection()">Сохранить и подключится</button>
+        <span id="setWifiStatus"></span>
+    </label>
+    <p>
+        <button onclick="updateState()">Обновить состояние</button>
+    </p>
+    <p>MAC-Адресс устройства: <span id="macAddress"></span></p>
+    <p>Статус: <span id="statusConnection"></span></p>
+    <p>IP адресс: <span id="ipAddress"></span></p>
+
+    <hr>
+</form>
+
+<form onsubmit="return false;">
+    <h2>Встроенная точка доступа wifi</h2>
+    <label>SSID точки доступа:<br><input type="text" id="locSSID"><br></label>
+    <label>Пароль точки доступа (если не нужен оставьте пустым):<br><input type="text" id="passwordLocSSID"><br></label>
+    <label>
+        <button onclick="setHotspot()">Применить</button>
+        <span id="setLocHotspotStatus"></span>
+    </label>
+    <hr>
+</form>
+
+<form onsubmit="return false;">
+    <h2>Встроенное логгирование показателей</h2>
+    <label>Период записи показателей(часы от 1 до 24) <input id="locLoggingPeriod" type="number" min="1" max="24" value="1"><br></label>
+    <label>
+        <button onclick="setLocalLogging()">Применить</button>
+        <span id="setLocLoggingStatus"></span>
+    </label>
+    <hr>
+</form>
+
+<form onsubmit="return false;">
+    <h2>Настройка передачи данных на сайт <a href="https://narodmon.com">народный мониторинг</a></h2>
+    <label>Периодичность передачи данных на сайт (минуты от 5 до 60) <input id="publishPeriod" type="number" min="5" max="60"
+                                                                            value="5"><br></label>
+    <label>Выберите датчики которые вы хотите опубликовать<br></label>
+    <label><input type="checkbox" id="datchikTempIn">Датчик температуры внутри здания<br></label>
+    <label><input type="checkbox" id="datchikHumIn">Датчик влажности внутри здания<br></label>
+    <label><input type="checkbox" id="datchikPresIn">Датчик давления внутри здания<br></label>
+    <label><input type="checkbox" id="datchikTempOut">Датчик температуры на улице<br></label>
+    <label><input type="checkbox" id="datchikHumOut">Датчик влажности на улице<br><br></label>
+
+    <label><input type="checkbox" id="enableStreamData"> Я зарегистрировал свой прибор на сайте</label>
+    <label>
+        <button onclick="setNarodmonSettings()">Применить</button>
+    </label>
+    <hr>
+</form>
+
+<form onsubmit="return false;">
+    <h2>Настройка даты и времени</h2>
+    <label>Время на метеостанции: <span id="currentTimeOnDevice"></span><br></label>
+    <label><input type="radio" name="timeChoose" id="useTimeFromDevice">Импортировать c браузера UTC:<span
+            id="userTime"></span><br></label>
+    <label><input type="radio" name="timeChoose" id="useTimeFromManual">Ввести вручную UTC <input type="time"
+                                                                                                  id="TimeManual">
+        <input type="date" id="DateManual"><br></label>
+    <h4>Правила перевода времени<br></h4>
+    <label><input type="checkbox" name="timeChoose" id="enableDaylightSavingTime"> Включить перевод на летнее время
+        автоматически<br><br></label>
+    <label>С зимнего на летнее<br>
+        <select id="toDaylightWeek">
+            <option value="1">Первая</option>
+            <option value="2">Вторая</option>
+            <option value="3">Третья</option>
+            <option value="4">Четвертая</option>
+            <option value="5" selected>Последнее</option>
+        </select>
+        <select id="toDaylightDoW">
+            <option value="1">Понедельник</option>
+            <option value="2">Вторник</option>
+            <option value="3">Среда</option>
+            <option value="4">Четверг</option>
+            <option value="5">Пятница</option>
+            <option value="5">Суббота</option>
+            <option value="5" selected>Воскресенье</option>
+        </select>
+        <select id="toDaylightMonth">
+            <option value="1">Январь</option>
+            <option value="2">Февраль</option>
+            <option value="3">Март</option>
+            <option value="4">Апрель</option>
+            <option value="5">Май</option>
+            <option value="6">Июнь</option>
+            <option value="7">Июль</option>
+            <option value="8">Август</option>
+            <option value="9">Сентябрь</option>
+            <option value="10" selected>Октябрь</option>
+            <option value="11">Ноябрь</option>
+            <option value="12">Декабрь</option>
+        </select>
+        в <input id="toDaylightTime" type="time" value="03:00">
+        разница от UTC: <input id="toDaylightDiff" type="time" value="03:00"><br><br>
+    </label>
+    <label>С летнего на зимнее<br>
+        <select id="fromDaylightWeek">
+            <option value="1">Первая</option>
+            <option value="2">Вторая</option>
+            <option value="3">Третья</option>
+            <option value="4">Четвертая</option>
+            <option value="5" selected>Последнее</option>
+        </select>
+        <select id="fromDaylightDoW">
+            <option value="1">Понедельник</option>
+            <option value="2">Вторник</option>
+            <option value="3">Среда</option>
+            <option value="4">Четверг</option>
+            <option value="5">Пятница</option>
+            <option value="5">Суббота</option>
+            <option value="5" selected>Воскресенье</option>
+        </select>
+        <select id="fromDaylightMonth">
+            <option value="1">Январь</option>
+            <option value="2">Февраль</option>
+            <option value="3" selected>Март</option>
+            <option value="4">Апрель</option>
+            <option value="5">Май</option>
+            <option value="6">Июнь</option>
+            <option value="7">Июль</option>
+            <option value="8">Август</option>
+            <option value="9">Сентябрь</option>
+            <option value="10">Октябрь</option>
+            <option value="11">Ноябрь</option>
+            <option value="12">Декабрь</option>
+        </select> в <input id="fromDaylightTime" type="time" value="04:00">
+        разница от UTC: <input id="fromDaylightDiff" type="time" value="02:00"><br><br>
+    </label>
+    <label><input type="checkbox" id="useNTP">Использовать сервер точного времени: <input
+            type="text" id="NTPServerSettings" value="ua.pool.ntp.org"><br></label>
+    <label>
+        <button onclick="setTimeSettings()">Применить</button>
+    </label>
+
+    <hr>
+</form>
+<script>
+    var baseHost = "http://192.168.1.129"
+
+    function getJson(url) {
+        var obj;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', baseHost + url, false);
+        xmlhttp.send();
+        if (xmlhttp.status === 200) {
+            obj = JSON.parse(xmlhttp.responseText);
+        }
+        return obj
+    }
+
+    function restoreConfigOnPage() {
+        configJson = getJson("/exportConfig")
+        document.getElementById("useConnectionToWifi").checked = configJson.useConncetionToWifi
+        if (configJson.useConncetionToWifi) {
+            switchWifiConnection()
+        }
+
+
+    }
+
+    function switchWifiConnection() {
+        document.getElementById("clientSSID").disabled = !document.getElementById("clientSSID").disabled
+        document.getElementById("passwordSSID").disabled = !document.getElementById("passwordSSID").disabled
+        //document.getElementById("applyWifiConnection").disabled = !document.getElementById("applyWifiConnection").disabled
+    }
+
+    function updateState() {
+        linkStatus = getJson("/getWifiStatus")
+        let humanStatus = "Не подключен"
+        if (linkStatus !== undefined) {
+            ip = "Нет данных"
+            if (linkStatus["status"] === 0) {
+                humanStatus = "Не подключен"
+                ip = "Нет данных"
+            } else if (linkStatus["status"] === 1) {
+                humanStatus = "Подключен но без доступа в интернет"
+                ip = linkStatus["ip"]
+            } else if (linkStatus["status"] === 2) {
+                humanStatus = "Подключен к интернету"
+                ip = linkStatus["ip"]
+            }
+            document.getElementById("macAddress").innerText = linkStatus["mac"];
+            document.getElementById("statusConnection").innerText = humanStatus;
+            document.getElementById("ipAddress").innerText = linkStatus["ip"];
+        }
+    }
+
+    function setHotspot() {
+        let hotspotSsid = document.getElementById("locSSID").value
+        let hotspotPass = document.getElementById("passwordLocSSID").value
+        let setHotStatus;
+        if (hotspotPass.length >= 8) {
+            setHotStatus = getJson("/setHotspot?ssid=" + hotspotSsid + "&pass=" + hotspotPass)
+        } else {
+            setHotStatus = getJson("/setHotspot?ssid=" + hotspotSsid)
+        }
+        if (setHotStatus !== undefined) {
+            document.getElementById("locSSID").value = setHotStatus["ssid"];
+            document.getElementById("passwordLocSSID").value = setHotStatus["pass"];
+            document.getElementById("setLocHotspotStatus").innerText = "Сохранено!";
+        } else {
+            document.getElementById("setLocHotspotStatus").innerText = "Произошла ошибка";
+        }
+    }
+
+    function setWiFiConnection() {
+        let useWifi = document.getElementById("useConnectionToWifi").checked ? 1 : 0;
+        let clientSsid = document.getElementById("clientSSID").value;
+        let clientPass = document.getElementById("passwordSSID").value;
+        let wifiClientStatus;
+        if (useWifi === 1) {
+            if (clientPass.length >= 8) {
+                wifiClientStatus = getJson("/setWifi?apen=" + useWifi + "&ssid=" + clientSsid + "&pass=" + clientPass)
+            } else {
+                wifiClientStatus = getJson("/setWifi?apen=" + useWifi + "&ssid=" + hotspotSsid)
+            }
+        } else {
+            wifiClientStatus = getJson("/setWifi?apen=" + useWifi)
+        }
+        if (wifiClientStatus !== undefined) {
+            if (wifiClientStatus["isHot"]) {
+                setTimeout(updateState, 1000);
+            } else {
+                document.getElementById("statusConnection").innerText = "Подключитесь к wifi метеостанции и проверьте соендинение";
+                document.getElementById("ipAddress").innerText = "Подключитесь к wifi метеостанции и проверьте соендинение";
+            }
+            document.getElementById("setWifiStatus").innerText = "Сохранено!";
+        } else {
+            document.getElementById("setWifiStatus").innerText = "Произошла ошибка";
+        }
+
+    }
+
+    function setLocalLogging() {
+        let loggingPeriod = document.getElementById("locLoggingPeriod").value;
+        let setLoggingPeriod =getJson("/setLogging?per="+loggingPeriod);
+        if (setLoggingPeriod !== undefined) {
+            document.getElementById("setLocLoggingStatus").innerText = "Сохранено!";
+        } else {
+            document.getElementById("setLocLoggingStatus").innerText = "Произошла ошибка";
+        }
+    }
+
+</script>
+</body>
+</html>

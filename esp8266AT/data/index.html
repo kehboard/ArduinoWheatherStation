@@ -1,0 +1,221 @@
+<html>
+<head>
+    <title>Weather Station v0.1</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /*
+          ##Device = Desktops
+          ##Screen = 1281px to higher resolution desktops
+        */
+
+        @media /*(min-width: 1281px)*/
+        (min-width: 1025px) {
+            .shortName {
+                display: none
+            }
+
+            .graphicCont:nth-child(2) .graphicCont:nth-child(4) .graphicCont:nth-child(6) {
+                margin-left: 0px !important;
+            }
+
+            /* CSS */
+
+        }
+
+        /*
+          ##Device = Laptops, Desktops
+          ##Screen = B/w 1025px to 1280px
+        */
+
+        /*@media (min-width: 1025px) and (max-width: 1280px) {
+          /* CSS
+
+        }*/
+
+        /*
+          ##Device = Tablets, Ipads (portrait)
+          ##Screen = B/w 768px to 1024px
+
+        */
+        @media (min-width: 768px) and (max-width: 1024px) {
+
+            .shortName {
+                display: none !important;
+            }
+
+        }
+
+        /*
+          ##Device = Tablets, Ipads (landscape)
+          ##Screen = B/w 768px to 1024px
+
+
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+
+
+        }*/
+
+        /*
+          ##Device = Low Resolution Tablets, Mobiles (Landscape)
+          ##Screen = B/w 481px to 767px
+        */
+
+        @media (min-width: 481px) and (max-width: 767px) {
+
+            /* CSS */
+            h1 {
+                text-align: center;
+                margin-bottom: 0.1em;
+            }
+
+            h2 {
+                margin-bottom: 0.5em;
+                margin-top: 0.3em;
+            }
+
+            .shortName {
+                display: none
+            }
+        }
+
+        /*
+          ##Device = Most of the Smartphones Mobiles (Portrait)
+          ##Screen = B/w 320px to 479px
+        */
+
+        @media (min-width: 100px) and (max-width: 480px) {
+            h1 {
+                text-align: center;
+                margin-bottom: 0.1em;
+            }
+
+            h2 {
+                margin-bottom: 0.5em;
+                margin-top: 0.3em;
+            }
+
+            .fullName {
+                display: none;
+            }
+
+            /* CSS */
+        }
+
+        .datagroupCont {
+            width: 100%;
+        }
+
+        .dataCont {
+            display: inline-block;
+            margin-left: 0.5em;
+            border: 1px solid black;
+            padding: 0.1em;
+            border-radius: 0.4em
+        }
+
+        div.dataCont:nth-child(2) {
+            margin-left: 0px;
+        }
+
+        .tempVal {
+            font-size: 2em;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .desc {
+            font-size: 1em;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .graphicCont {
+            width: 100%;
+            margin-bottom: 0.1em;
+            /*background: black;*/
+            height: 300px;
+            display: block;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Метеостанция</h1>
+<a href="settings.html">настройка</a>
+<div class="datagroupCont">
+    <h2>В помещении</h2>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Температура:</span><span class="shortName">T:</span> <span
+                id="inTmpVal">--</span>&deg;C</div>
+    </div>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Влажность:</span><span class="shortName">RH:</span> <span
+                id="inHumVal">--</span>%</div>
+    </div>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Давление:</span><span class="shortName">P:</span> <span
+                id="inPrsVal">--</span>mmHg</div>
+    </div>
+</div>
+
+<div class="datagroupCont">
+    <h2>На улице</h2>
+    <div class="dataCont">
+        <div class="dataVal" onclick="alert('hello')"><span class="fullName">Температура:</span><span class="shortName">T:</span>
+            <span id="outTmpVal">--</span>&deg;C
+        </div>
+    </div>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Влажность:</span><span class="shortName">RH:</span> <span
+                id="outHumVal">--</span>%
+        </div>
+    </div>
+    <div id="floatingBarsG">
+        <div class="blockG" id="rotateG_01"></div>
+        <div class="blockG" id="rotateG_02"></div>
+        <div class="blockG" id="rotateG_03"></div>
+        <div class="blockG" id="rotateG_04"></div>
+        <div class="blockG" id="rotateG_05"></div>
+        <div class="blockG" id="rotateG_06"></div>
+        <div class="blockG" id="rotateG_07"></div>
+        <div class="blockG" id="rotateG_08"></div>
+    </div>
+</div>
+<script>
+    function getData(jsonObj) {
+        if(jsonObj["locTmp"]!==-273.15){
+            document.getElementById("inTmpVal").innerHTML = jsonObj["locTmp"] ;
+            document.getElementById("inPrsVal").innerHTML = jsonObj["locPrs"];
+            document.getElementById("inHumVal").innerHTML = jsonObj["locHum"];
+            document.getElementById("outHumVal").innerHTML = jsonObj["ouHum"];
+            document.getElementById("outTmpVal").innerHTML = jsonObj["ouTmp"];
+        }
+        else{
+        }
+    }
+
+    function getJson(url,onReadyCallback,onStartLoading, onFailLoading) {
+        var obj;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', "http://192.168.1.129"+url, true);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200){
+                onReadyCallback(JSON.parse(xmlhttp.responseText));
+            }
+            else if(xmlhttp.readyState === 4 && xmlhttp.status !== 200){
+                onFailLoading()
+            }
+            else if (xmlhttp.readyState === 1){
+                onStartLoading()
+            }
+        };
+    }
+    function showloading() {
+    }
+    window.onload = getJson("/getActual",getData,showloading,showloading);
+    setInterval(getJson,5000,"/getActual",getData,showloading,showloading);
+</script>
+</body>
+</html>
