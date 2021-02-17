@@ -10,4 +10,4 @@
 измерение и отправить эти данные на внутренний блок.
 
 Связь между двумя блоками происходит через модули hc-12 по радоканалу 433 мгц
-Печатные платы для метеостанции находястя  тут [Внутренний блок](https://oshwlab.com/kehboard127001/indoor_wheater_station), [Внешний блок](https://oshwlab.com/kehboard127001/indoor_wheater_station)
+Печатные платы для метеостанции находястя  тут [Внутренний блок](https://oshwlab.com/kehboard127001/esp32-wheather-station), [Внешний блок](https://oshwlab.com/kehboard127001/indoor_wheater_station)
