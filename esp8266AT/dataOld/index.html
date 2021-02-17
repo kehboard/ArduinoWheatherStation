@@ -1,0 +1,271 @@
+<html>
+<head>
+    <title>Weather Station v0.1</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="uPlot.min.css">
+    <style>
+        /*
+          ##Device = Desktops
+          ##Screen = 1281px to higher resolution desktops
+        */
+
+        @media /*(min-width: 1281px)*/
+        (min-width: 1025px) {
+            .shortName {
+                display: none
+            }
+
+            .graphicCont:nth-child(2) .graphicCont:nth-child(4) .graphicCont:nth-child(6) {
+                margin-left: 0px !important;
+            }
+
+            /* CSS */
+
+        }
+
+        /*
+          ##Device = Laptops, Desktops
+          ##Screen = B/w 1025px to 1280px
+        */
+
+        /*@media (min-width: 1025px) and (max-width: 1280px) {
+          /* CSS
+
+        }*/
+
+        /*
+          ##Device = Tablets, Ipads (portrait)
+          ##Screen = B/w 768px to 1024px
+
+        */
+        @media (min-width: 768px) and (max-width: 1024px) {
+
+            .shortName {
+                display: none !important;
+            }
+
+        }
+
+        /*
+          ##Device = Tablets, Ipads (landscape)
+          ##Screen = B/w 768px to 1024px
+
+
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+
+
+        }*/
+
+        /*
+          ##Device = Low Resolution Tablets, Mobiles (Landscape)
+          ##Screen = B/w 481px to 767px
+        */
+
+        @media (min-width: 481px) and (max-width: 767px) {
+
+            /* CSS */
+            h1 {
+                text-align: center;
+                margin-bottom: 0.1em;
+            }
+
+            h2 {
+                margin-bottom: 0.5em;
+                margin-top: 0.3em;
+            }
+
+            .shortName {
+                display: none
+            }
+        }
+
+        /*
+          ##Device = Most of the Smartphones Mobiles (Portrait)
+          ##Screen = B/w 320px to 479px
+        */
+
+        @media (min-width: 100px) and (max-width: 480px) {
+            h1 {
+                text-align: center;
+                margin-bottom: 0.1em;
+            }
+
+            h2 {
+                margin-bottom: 0.5em;
+                margin-top: 0.3em;
+            }
+
+            .fullName {
+                display: none;
+            }
+
+            /* CSS */
+        }
+
+        .datagroupCont {
+            width: 100%;
+        }
+
+        .dataCont {
+            display: inline-block;
+            margin-left: 0.5em;
+            border: 1px solid black;
+            padding: 0.1em;
+            border-radius: 0.4em
+        }
+
+        div.dataCont:nth-child(2) {
+            margin-left: 0px;
+        }
+
+        .tempVal {
+            font-size: 2em;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .desc {
+            font-size: 1em;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .graphicCont {
+            width: 100%;
+            margin-bottom: 0.1em;
+            /*background: black;*/
+            height: 300px;
+            display: block;
+            float: left;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Метеостанция</h1>
+<a href="settings.html">настройка</a>
+<div class="datagroupCont">
+    <h2>В помещении</h2>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Температура:</span><span class="shortName">T:</span> <span
+                id="inTmpVal"></span>&deg;C</div>
+    </div>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Влажность:</span><span class="shortName">RH:</span> <span
+                id="inHumVal"></span>%</div>
+    </div>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Давление:</span><span class="shortName">P:</span> <span
+                id="inPrsVal"></span>mmHg</div>
+    </div>
+</div>
+
+<div class="datagroupCont">
+    <h2>На улице</h2>
+    <div class="dataCont">
+        <div class="dataVal" onclick="alert('hello')"><span class="fullName">Температура:</span><span class="shortName">T:</span>
+            <span id="outTmpVal"></span>&deg;C
+        </div>
+    </div>
+    <div class="dataCont">
+        <div class="dataVal"><span class="fullName">Влажность:</span><span class="shortName">RH:</span> <span
+                id="outHumVal"></span>%
+        </div>
+    </div>
+</div>
+<h2>Графики</h2>
+<div class="graphics">
+    <div class="graphicCont">
+        <div id="graphic1" style="height: 280px"></div>
+    </div>
+    <div class="graphicCont">
+        <div id="graphic2" style="height: 280px"></div>
+    </div>
+    <div class="graphicCont">
+        <div id="graphic3" style="height: 280px"></div>
+    </div>
+</div>
+<script src="uPlot.iife.min.js"></script>
+<script>
+    function getData(jsonObj) {
+        if(jsonObj["locTmp"]!==-273.15){
+            document.getElementById("inTmpVal").innerHTML = jsonObj["locTmp"] ;
+            document.getElementById("inPrsVal").innerHTML = jsonObj["locPrs"];
+            document.getElementById("inHumVal").innerHTML = jsonObj["locHum"];
+            document.getElementById("outHumVal").innerHTML = jsonObj["ouHum"];
+            document.getElementById("outTmpVal").innerHTML = jsonObj["ouTmp"];
+        }
+    }
+
+
+
+    function getJson(url,callback) {
+        var obj;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', "http://192.168.1.129"+url, true);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState === 4){
+                callback(JSON.parse(xmlhttp.responseText));
+            }
+        };
+    }
+
+    function drawGraphic(id,name,xName,value,data) {
+        console.log(document.getElementById(id).clientWidth);
+        console.log(document.getElementById(id).clientHeight);
+        let opts = {
+            title: name,
+            width: document.getElementById("graphic1").clientWidth,
+            height: document.getElementById("graphic1").clientHeight-35,
+            series: [
+                {},
+                {
+                    // initial toggled state (optional)
+                    show: true,
+                    spanGaps: false,
+                    // in-legend display
+                    label: xName[0],
+                    value: (self, rawValue) =>rawValue.toFixed(2) + "°C",
+
+                    // series style
+                    stroke: "red",
+                    width: 1,
+                    //fill: "rgba(255, 0, 0, 0.3)",
+                    dash: [10, 5],
+                },
+                {
+                    // initial toggled state (optional)
+                    show: true,
+                    spanGaps: false,
+                    // in-legend display
+                    label: xName[1],
+                    value: (self, rawValue) =>rawValue.toFixed(2) + "°C",
+
+                    // series style
+                    stroke: "green",
+                    width: 1,
+                    //fill: "rgba(255, 0, 0, 0.3)",
+                    dash: [10, 5],
+                }
+            ],
+        };
+
+        let uplot = new uPlot(opts, data, document.getElementById(id));
+    }
+
+    //window.onload = drawGraphic("graphic1","Изменение тепературы внутри и за окном",["внутри","за окном"],"°C",[[140000000, 140000001],
+     //   [2, 32],
+    //    [2, 30]]);
+    //window.onload = drawGraphic("graphic2","Изменение влажности внутри и за окном",["внутри","за окном"],"%",[[140000000, 140000001],
+    //    [2, 32],
+    //    [2, 30]]);
+    //window.onload = drawGraphic("graphic3","Изменение давления внутри",["внутри","за окном"],"mmHg",[[140000000, 140000001],
+    //    [2, 32],
+    //    [2, 30]]);
+    window.onload = getJson("/getActual",getData);
+    setInterval(getJson,4000,"/getActual",getData);
+</script>
+</body>
+</html>
